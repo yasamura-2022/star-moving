@@ -112,8 +112,8 @@ function addHeatSource() {
         const idx = index(x, y);
         const falloff = 1 - distanceSq / (radius * radius);
         temp[idx] = Math.min(maxTemp, temp[idx] + heatPower * falloff);
+        // 上昇する力だけにし、横に動かす力をなくしました
         velY[idx] -= heatPower * 6 * falloff;
-        velX[idx] -= heatPower * 1.6 * falloff;
       }
     }
   }
@@ -139,22 +139,13 @@ function addBuoyancy() {
 }
 
 function addCirculation() {
-  const pivotX = gridWidth * 0.55;
-  const pivotY = gridHeight * 0.55;
-  const swirlStrength = 0.0009;
-  const returnFlow = 0.0035;
+  const returnFlow = 0.004;
   for (let y = 1; y < gridHeight - 1; y += 1) {
+    const verticalRatio = y / gridHeight; // 上が0, 下が1
     for (let x = 1; x < gridWidth - 1; x += 1) {
       const idx = index(x, y);
-      const dx = x - pivotX;
-      const dy = y - pivotY;
-      const distance = Math.sqrt(dx * dx + dy * dy) + 1;
-      const heatFactor = Math.max(0, temp[idx] - ambientTemp);
-      const swirl = swirlStrength * (0.4 + heatFactor * 2);
-      velX[idx] += (-dy / distance) * swirl;
-      velY[idx] += (dx / distance) * swirl;
-      const verticalRatio = y / gridHeight;
-      velX[idx] += (0.5 - verticalRatio) * returnFlow * (0.4 + heatFactor * 3);
+      // 上半分では左向き、下半分では右向きの力を加える
+      velX[idx] += (verticalRatio - 0.5) * returnFlow;
     }
   }
 }

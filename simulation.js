@@ -121,14 +121,17 @@ function addHeatSource() {
 
 function addBuoyancy() {
   const buoyancyStrength = 0.06;
-  const sinkStrength = 0.018;
+  // 冷たい水が沈む力を、温かい水が上がる力と同じ強さに変更
+  const sinkStrength = 0.06; 
   for (let y = 1; y < gridHeight - 1; y += 1) {
     for (let x = 1; x < gridWidth - 1; x += 1) {
       const idx = index(x, y);
       const delta = temp[idx] - ambientTemp;
       if (delta > 0) {
+        // 温かい水は上がる（Y方向のマイナスが上）
         velY[idx] -= delta * buoyancyStrength;
       } else {
+        // 冷たい水は沈む（Y方向のプラスが下）
         velY[idx] -= delta * sinkStrength;
       }
     }

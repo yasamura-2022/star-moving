@@ -82,6 +82,7 @@ function stepSimulation() {
   addHeatSource();
   addBuoyancy();
   addCirculation();
+  addSurfaceSpread();
   advectVelocity();
   diffuseField(velX, velXBuffer, 0.0008);
   diffuseField(velY, velYBuffer, 0.0008);
@@ -146,6 +147,34 @@ function addCirculation() {
       const idx = index(x, y);
       // 上半分では左向き、下半分では右向きの力を加える
       velX[idx] += (verticalRatio - 0.5) * returnFlow;
+    }
+  }
+}
+
+function addSurfaceSpread() {
+  const topBand = Math.floor(gridHeight * 0.18);
+  const plumeCenterX = gridWidth - Math.floor(gridWidth * 0.12);
+  const spreadStrength = 0.06;
+  const verticalHold = 0.7;
+  const sinkStrength = 0.02;
+  const sinkBandWidth = Math.floor(gridWidth * 0.22);
+  for (let y = 1; y < topBand; y += 1) {
+    const verticalFalloff = 1 - y / topBand;
+    for (let x = 1; x < gridWidth - 1; x += 1) {
+      const idx = index(x, y);
+      const offset = x - plumeCenterX;
+      if (offset <= 0) {
+        const influence = Math.exp(offset * 0.05) * verticalFalloff;
+        velX[idx] -= spreadStrength * influence;
+        velY[idx] *= verticalHold;
+      } else {
+        const influence = Math.exp(-offset * 0.045) * verticalFalloff;
+        velX[idx] -= spreadStrength * 0.6 * influence;
+      }
+      if (x < sinkBandWidth) {
+        const sinkInfluence = (1 - x / sinkBandWidth) * verticalFalloff;
+        velY[idx] += sinkStrength * sinkInfluence;
+      }
     }
   }
 }

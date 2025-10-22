@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>対流シミュレーション</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main class="layout">
+    <section class="canvas-panel">
+      <canvas id="simCanvas" width="480" height="600"></canvas>
+      <div class="controls">
+        <button id="toggleButton">一時停止</button>
+        <label>
+          加熱強度
+          <input type="range" id="heatSlider" min="0" max="100" value="65">
+        </label>
+        <label>
+          拡散
+          <input type="range" id="diffusionSlider" min="0" max="100" value="45">
+        </label>
+        <label>
+          表示倍率
+          <input type="range" id="scaleSlider" min="100" max="200" value="140">
+        </label>
+      </div>
+    </section>
+    <section class="info-panel">
+      <h1>ビーカー内の対流</h1>
+      <p>
+        ビーカー右下から加熱した水が上昇し、冷たい水が沈み込むことで全体が循環しながら温まっていく様子をシミュレートしています。
+        示温インクの色を模して、冷たい領域は青、暖かい領域はピンクで表示されます。
+      </p>
+      <ul>
+        <li><strong>加熱強度</strong> : 右下加熱の強さを変更します。</li>
+        <li><strong>拡散</strong> : 水が混ざり合う速さを調整します。</li>
+        <li><strong>表示倍率</strong> : 描画を拡大縮小して観察しやすくします。</li>
+      </ul>
+    </section>
+  </main>
+  <script src="simulation.js" type="module"></script>
+</body>
+</html>
